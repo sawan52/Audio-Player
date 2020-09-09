@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHolder> {
 
     private Context mContext;
-    private ArrayList<MusicFiles> mFiles;
+    static ArrayList<MusicFiles> mFiles;
 
     public MusicAdapter(Context mContext, ArrayList<MusicFiles> mFiles) {
         this.mContext = mContext;
@@ -133,4 +133,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
         }
     }
 
+    void updateList(ArrayList<MusicFiles> musicFilesArrayList){
+
+        mFiles = new ArrayList<>();
+        mFiles.addAll(musicFilesArrayList);
+        notifyDataSetChanged();
+
+    }
 }
