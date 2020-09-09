@@ -1,5 +1,6 @@
 package com.example.audio_player;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -10,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -26,7 +29,7 @@ import java.util.Objects;
 
 import static com.example.audio_player.MainActivity.musicFiles;
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
     static ArrayList<MusicFiles> listOfSongs = new ArrayList<>();
     static Uri uri;
@@ -48,7 +51,7 @@ public class PlayerActivity extends AppCompatActivity {
 
         songName.setText(listOfSongs.get(position).getTitle());
         artistName.setText(listOfSongs.get(position).getArtist());
-
+        mediaPlayer.setOnCompletionListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int pos, boolean fromUser) {
@@ -185,6 +188,7 @@ public class PlayerActivity extends AppCompatActivity {
             });
             playPauseButton.setImageResource(R.drawable.ic_pause);
             mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
 
         } else {
 
@@ -210,6 +214,7 @@ public class PlayerActivity extends AppCompatActivity {
             });
             playPauseButton.setImageResource(R.drawable.ic_pause);
             mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
         }
     }
 
@@ -254,6 +259,7 @@ public class PlayerActivity extends AppCompatActivity {
             });
             playPauseButton.setImageResource(R.drawable.ic_pause);
             mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
 
         } else {
 
@@ -279,6 +285,7 @@ public class PlayerActivity extends AppCompatActivity {
             });
             playPauseButton.setImageResource(R.drawable.ic_pause);
             mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
         }
     }
 
@@ -348,8 +355,8 @@ public class PlayerActivity extends AppCompatActivity {
         byte[] art = retriever.getEmbeddedPicture();
         Bitmap bitmap;
         if (art != null) {
-            Glide.with(this).asBitmap().load(art).into(covertArt);
             bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            ImageAnimation(this, covertArt, bitmap);
             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(@Nullable Palette palette) {
@@ -397,5 +404,58 @@ public class PlayerActivity extends AppCompatActivity {
             songName.setTextColor(Color.WHITE);
             artistName.setTextColor(Color.DKGRAY);
         }
+    }
+
+    public void ImageAnimation(final Context context, final ImageView imageView, final Bitmap bitmap){
+        Animation animOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
+        final Animation animIn = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+
+        animOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Glide.with(context).load(bitmap).into(imageView);
+                animIn.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                imageView.startAnimation(animIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        imageView.startAnimation(animOut);
+
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        nextButtonClicked();
+        /*
+        if (mediaPlayer != null){
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
+        }
+        */
     }
 }

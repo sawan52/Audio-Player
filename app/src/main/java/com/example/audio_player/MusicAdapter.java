@@ -72,7 +72,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
         return art;
     }
 
-    public class MusicViewHolder extends RecyclerView.ViewHolder {
+    // makes this static
+    public static class MusicViewHolder extends RecyclerView.ViewHolder {
 
         TextView fileName;
         ImageView albumArt;
