@@ -16,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
+import static com.example.audio_player.AlbumDetailsAdapter.albumFiles;
 import static com.example.audio_player.MainActivity.musicFiles;
 import static com.example.audio_player.MainActivity.repeatBoolean;
 import static com.example.audio_player.MainActivity.shuffleBoolean;
@@ -367,7 +367,13 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
     private void getIntentMethod() {
 
         position = getIntent().getIntExtra("position", -1);
-        listOfSongs = musicFiles;
+        String sender = getIntent().getStringExtra("sender");
+
+        if (sender !=null && sender.equals("albumDetails")){
+            listOfSongs = albumFiles;
+        }else {
+            listOfSongs = musicFiles;
+        }
 
         if (listOfSongs != null) {
 

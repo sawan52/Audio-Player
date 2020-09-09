@@ -7,10 +7,9 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import static com.example.audio_player.MainActivity.musicFiles;
+import static com.example.audio_player.MainActivity.albumsMF;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,15 +28,16 @@ public class AlbumFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_album, container, false);
-        recyclerView = view.findViewById(R.id.recyclerView);
+        recyclerView = view.findViewById(R.id.recyclerViewAlbumFragment);
         recyclerView.setHasFixedSize(true);
 
-        if (!(musicFiles.size() < 1)) {
+        if (!(albumsMF.size() < 1)) {
 
-            albumAdapter = new AlbumAdapter(getContext(), musicFiles);
+            albumAdapter = new AlbumAdapter(getContext(), albumsMF);
             recyclerView.setAdapter(albumAdapter);
             recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         }
         return view;
     }
 }
+

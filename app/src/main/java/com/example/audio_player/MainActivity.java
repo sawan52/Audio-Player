@@ -29,40 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE = 1;
     static ArrayList<MusicFiles> musicFiles;
     static boolean shuffleBoolean = false, repeatBoolean = false;
-
-    public static ArrayList<MusicFiles> getAllAudioFiles(Context context) {
-
-        ArrayList<MusicFiles> tempAudioList = new ArrayList<>();
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = {
-                MediaStore.Audio.Media.ALBUM,
-                MediaStore.Audio.Media.TITLE,
-                MediaStore.Audio.Media.DURATION,
-                MediaStore.Audio.Media.DATA,    // for path
-                MediaStore.Audio.Media.ARTIST,
-                MediaStore.Audio.Media._ID
-        };
-
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-
-                String album = cursor.getString(0);
-                String title = cursor.getString(1);
-                String duration = cursor.getString(2);
-                String path = cursor.getString(3);
-                String artist = cursor.getString(4);
-                String id = cursor.getString(5);
-
-                MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration, id);
-                Log.e("Path: " + path, "Album: " + album);
-                tempAudioList.add(musicFiles);
-            }
-            cursor.close();
-        }
-        return tempAudioList;
-
-    }
+    static ArrayList<MusicFiles> albumsMF = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE){
+        if (requestCode == REQUEST_CODE) {
 
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 musicFiles = getAllAudioFiles(this);
                 initLayoutComponent();
@@ -110,6 +77,46 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragments(new AlbumFragment(), "Albums");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
+
+    }
+
+    public static ArrayList<MusicFiles> getAllAudioFiles(Context context) {
+
+        ArrayList<String> duplicate = new ArrayList<>();
+        ArrayList<MusicFiles> tempAudioList = new ArrayList<>();
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] projection = {
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA,    // for path
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media._ID
+        };
+
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+
+                String album = cursor.getString(0);
+                String title = cursor.getString(1);
+                String duration = cursor.getString(2);
+                String path = cursor.getString(3);
+                String artist = cursor.getString(4);
+                String id = cursor.getString(5);
+
+                MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration, id);
+                Log.e("Path: " + path, "Album: " + album);
+                tempAudioList.add(musicFiles);
+
+                if (!duplicate.contains(album)) {
+                    albumsMF.add(musicFiles);
+                    duplicate.add(album);
+                }
+            }
+            cursor.close();
+        }
+        return tempAudioList;
 
     }
 
